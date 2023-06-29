@@ -1,5 +1,6 @@
 import { useForm } from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
+import { useEffect } from "react";
 
 let renderCount = 0;
 
@@ -13,23 +14,32 @@ type FormValue = {
   };
 };
 export const SimpleForm = () => {
-  const { register, control, formState, handleSubmit } = useForm<FormValue>({
-    defaultValues: {
-      name: "",
-      email: "",
-      channel: "",
-    },
-  });
+  const { register, watch, control, formState, handleSubmit } =
+    useForm<FormValue>({
+      defaultValues: {
+        name: "",
+        email: "",
+        channel: "",
+      },
+    });
   const { errors } = formState;
   renderCount++;
   const onSubmit = (data: FormValue) => {
     console.log("form value", data);
   };
+  useEffect(() => {
+    const subscriptioin = watch((value) => {
+      console.log("value");
+    });
+    return () => subscriptioin.unsubscribe();
+  }, [watch]);
+
   return (
     <div className="flex w-2/5 relative  flex-col">
       <h1 className="text-center text-xl mb-10 font-semibold text-white">
-        Simple Validation Form{renderCount / 2}
+        Simple Validation Form ({renderCount / 2})
       </h1>
+
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="px-2 py-4 bg-black/30  rounded-xl"
