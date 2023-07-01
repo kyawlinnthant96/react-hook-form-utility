@@ -11,19 +11,32 @@ type FormValue = {
   phoneNo: string[];
 };
 export const NestedObjectAndArray = () => {
-  const { register, control, formState, handleSubmit } = useForm<FormValue>({
-    defaultValues: {
-      social: {
-        facebook: "",
-        twitter: "",
+  const { register, setValue, getValues, control, formState, handleSubmit } =
+    useForm<FormValue>({
+      defaultValues: {
+        social: {
+          facebook: "",
+          twitter: "",
+        },
+        phoneNo: ["", ""],
       },
-      phoneNo: ["", ""],
-    },
-  });
+    });
   const { errors } = formState;
   renderCount++;
   const onSubmit = (data: FormValue) => {
     console.log("form value", data);
+  };
+
+  const handleGetValue = () => {
+    console.log("get values", getValues());
+  };
+
+  const handleSetValue = () => {
+    setValue("social.facebook", "", {
+      shouldValidate: true,
+      shouldDirty: true,
+      shouldTouch: true,
+    });
   };
   return (
     <div className="flex w-2/5   flex-col">
@@ -31,6 +44,7 @@ export const NestedObjectAndArray = () => {
         Neste Object and Array Form{renderCount / 2}
       </h1>
       <form
+        noValidate
         onSubmit={handleSubmit(onSubmit)}
         className="px-2 py-4 bg-black/30  rounded-xl"
       >
@@ -98,11 +112,23 @@ export const NestedObjectAndArray = () => {
             className="standard-inputbox"
           />
         </div>
+        <button className=" px-6 py-2 w-40 mx-auto rounded-xl bg-white text-blue-500 mt-5 font-medium text-base">
+          Submit
+        </button>
+        {/* make sure to give button type to button else then form must be auto  submit*/}
         <button
-          type="submit"
+          type="button"
+          onClick={handleGetValue}
           className=" px-6 py-2 w-40 mx-auto rounded-xl bg-white text-blue-500 mt-5 font-medium text-base"
         >
-          Submit
+          Get Values
+        </button>
+        <button
+          type="button"
+          onClick={handleSetValue}
+          className=" px-6 py-2 w-40 mx-auto rounded-xl bg-white text-blue-500 mt-5 font-medium text-base"
+        >
+          Set Values
         </button>
         <DevTool control={control} />
       </form>

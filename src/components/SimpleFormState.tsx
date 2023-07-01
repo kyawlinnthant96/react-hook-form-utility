@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { FieldErrors, useForm } from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
 import { useEffect } from "react";
 
@@ -21,11 +21,18 @@ export const SimpleForm = () => {
         email: "",
         channel: "",
       },
+      mode: "onSubmit",
     });
   const { errors } = formState;
   renderCount++;
   const onSubmit = (data: FormValue) => {
     console.log("form value", data);
+  };
+  const onError = (errors: FieldErrors<FormValue>) => {
+    console.log("form error", errors);
+    if (errors.channel?.type === "required") {
+      window.alert("is Required channal name");
+    }
   };
   useEffect(() => {
     const subscriptioin = watch((value) => {
@@ -41,7 +48,7 @@ export const SimpleForm = () => {
       </h1>
 
       <form
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={handleSubmit(onSubmit, onError)}
         className="px-2 py-4 bg-black/30  rounded-xl"
       >
         <div className="relative flex gap-y-2 flex-col">
@@ -90,6 +97,13 @@ export const SimpleForm = () => {
                     !fieldValue.endsWith("baddomain.com") ||
                     "This domain is not supported"
                   );
+                },
+                emailValidate: async (fieldValue) => {
+                  const response = await fetch(
+                    `https://jsonplaceholder.typicode.com/users?email=${fieldValue}`
+                  );
+                  const data = await response.json();
+                  return data.length == 0 || "Email has already exists";
                 },
               },
             })}
